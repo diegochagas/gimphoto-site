@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# The one gate (dev-playbook): what the pre-push hook and CI run. Types,
+# unit tests (on GIMPhoto's docs, fetched into .gimphoto/ or GIMPHOTO_DIR)
+# and the static build. The browser tests are `npm run e2e`.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+[[ -d node_modules ]] || npm ci
+echo "== types"
+npm run --silent lint
+echo "== unit tests"
+npm test --silent
+echo "== build"
+npm run --silent build >/dev/null
+echo "check: OK"
