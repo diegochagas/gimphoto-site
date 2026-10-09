@@ -24,6 +24,13 @@ describe("the donation section", () => {
     expect(html).not.toContain("data-goal");
   });
 
+  it("shows a QR code for a link listed under qr", async () => {
+    const html = await render("en", { ...some, qr: { paypal: "" } });
+    expect(html).toContain('data-link-qr="paypal"');
+    expect(html).toContain('alt="PayPal QR code"');
+    expect(html).not.toContain('data-link-qr="github-sponsors"');
+  });
+
   it("shows PIX with its code and QR, the set-up links only, and the goal", async () => {
     const html = await render("pt", some);
     expect(html).toContain("63041D3D");

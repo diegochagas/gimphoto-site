@@ -1,12 +1,23 @@
 {
-  "_comment": "Donation methods shown on the site. Leave a value empty to hide that method. URLs must start with https://. PIX: the key plus the receiver's name and city as the bank shows them (the QR code and copy-and-paste code are made from them).",
-  "pix": {"key": "", "name": "", "city": ""},
+  "_comment": "Donation methods shown on the site. Leave a value empty to hide that method. URLs must start with https://. PIX: the key plus the receiver's name and city (the QR code and copy-and-paste code are made from them; bank apps show the account holder from the PIX key itself). qr: link methods that also show a QR code, each with what the code holds (empty: the link itself; PayPal's own QR adds &source=qr).",
+  "pix": {
+    "key": "drochachagas@gmail.com",
+    "name": "Diego Chagas",
+    "city": "BRASIL"
+  },
   "links": {
     "github-sponsors": "",
     "kofi": "",
     "buymeacoffee": "",
-    "paypal": "",
+    "paypal": "https://www.paypal.com/donate/?business=TM4XVKVWM7K3G&no_recurring=0&item_name=Your+donation+pays+for+the+hours+that+turn+a+Photoshop+feature+into+a+tested+GIMPhoto+release%21&currency_code=USD",
     "liberapay": ""
   },
-  "goal": {"monthly": 0, "raised": 0, "currency": "BRL"}
+  "qr": {
+    "paypal": "https://www.paypal.com/donate/?business=TM4XVKVWM7K3G&no_recurring=0&item_name=Your+donation+pays+for+the+hours+that+turn+a+Photoshop+feature+into+a+tested+GIMPhoto+release%21&currency_code=USD&source=qr"
+  },
+  "goal": {
+    "monthly": 0,
+    "raised": 0,
+    "currency": "BRL"
+  }
 }
