@@ -21,7 +21,8 @@ type Config = {
 
 export default async function Donate({ lang, config = donate as Config }: { lang: Lang; config?: Config }) {
   const { pix, links, goal } = config;
-  const payload = pix.key && pix.name && pix.city ? pixPayload(pix) : null;
+  // PIX is Brazil's: offered on the Portuguese pages only
+  const payload = lang === "pt" && pix.key && pix.name && pix.city ? pixPayload(pix) : null;
   const svg = (text: string) => QRCode.toString(text, { type: "svg", margin: 0, errorCorrectionLevel: "M" });
   const dataUri = (code: string) => `data:image/svg+xml;utf8,${encodeURIComponent(code)}`;
   const qr = payload ? await svg(payload) : null;

@@ -167,11 +167,17 @@ test("install tabs switch, and Copy copies the commands without comments", async
   await expect(page.locator("[data-copy]")).toHaveText("Copied");
 });
 
-test("the donation section offers the methods set up: PIX code and QR, PayPal", async ({ page, context }) => {
+test("the donation section offers PayPal in English, and PIX too in Portuguese", async ({ page, context }) => {
   await offline(page);
   await page.goto(`${BASE}/`);
   await expect(page.locator("#donate h2")).toContainText("Help the next Photoshop feature land.");
   await expect(page.locator("#donate [data-soon]")).toHaveCount(0);
+  await expect(page.locator("#donate [data-pix]")).toHaveCount(0);
+  await expect(page.locator("#donate")).not.toContainText("PIX");
+  await expect(page.locator('#donate a[href^="https://www.paypal.com/donate/"]')).toBeVisible();
+  await expect(page.locator('#donate img[alt="PayPal QR code"]')).toBeVisible();
+  await page.goto(`${BASE}/pt/`);
+  await expect(page.locator("#donate h2")).toContainText("Ajude o próximo recurso do Photoshop a chegar.");
   // the PIX copy-and-paste code: a BR Code ending with its own CRC
   const pix = await page.locator("#donate [data-pix]").getAttribute("data-pix");
   expect(pix).toMatch(/^000201.*br\.gov\.bcb\.pix.*6304[0-9A-F]{4}$/);

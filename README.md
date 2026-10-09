@@ -26,7 +26,8 @@ published by GitHub Pages. It is built from GIMPhoto's own README and docs:
 Fill in `content/donate.json`; an empty value hides that method, and with
 none set up the section says donations are opening soon.
 
-- `pix`: the key, and the receiver's name and city as the bank shows them.
+- `pix`: the key, and the receiver's name and city. PIX is Brazilian, so it
+  is offered on the Portuguese pages only.
   The site makes the PIX copy-and-paste code (the Banco Central's BR Code)
   and its QR code at build time.
 - `links`: full `https://` addresses for GitHub Sponsors, Ko-fi, Buy Me a

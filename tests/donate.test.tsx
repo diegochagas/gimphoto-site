@@ -24,6 +24,15 @@ describe("the donation section", () => {
     expect(html).not.toContain("data-goal");
   });
 
+  it("offers PIX on the Portuguese page only", async () => {
+    expect(await render("pt", some)).toContain('alt="PIX QR code"');
+    const english = await render("en", some);
+    expect(english).not.toContain("PIX");
+    expect(english).toContain("PayPal");
+    // English with only PIX set up: nothing to offer, donations open soon
+    expect(await render("en", { ...none, pix: some.pix })).toContain("data-soon");
+  });
+
   it("shows a QR code for a link listed under qr", async () => {
     const html = await render("en", { ...some, qr: { paypal: "" } });
     expect(html).toContain('data-link-qr="paypal"');
