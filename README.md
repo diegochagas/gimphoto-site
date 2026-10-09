@@ -31,6 +31,8 @@ none set up the section says donations are opening soon.
   and its QR code at build time.
 - `links`: full `https://` addresses for GitHub Sponsors, Ko-fi, Buy Me a
   Coffee, PayPal or Liberapay.
+- `qr`: link methods that also show a QR code, each with what the code
+  holds (empty: the link itself). PayPal's own QR adds `&source=qr`.
 - `goal`: a monthly amount and what came in, to show a progress bar (0:
   hidden).
 

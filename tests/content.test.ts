@@ -29,5 +29,10 @@ describe("the site's own content", () => {
     const { key, name, city } = donate.pix;
     expect([key, name, city].every(Boolean) || [key, name, city].every((v) => !v)).toBe(true);
     expect(donate.goal.monthly).toBeGreaterThanOrEqual(0);
+    // a QR is only for a link that is set up
+    for (const [id, content] of Object.entries(donate.qr ?? {})) {
+      expect((donate.links as Record<string, string>)[id], id).toMatch(/^https:\/\//);
+      expect(content === "" || content.startsWith("https://"), id).toBe(true);
+    }
   });
 });

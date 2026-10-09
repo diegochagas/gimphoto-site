@@ -167,11 +167,21 @@ test("install tabs switch, and Copy copies the commands without comments", async
   await expect(page.locator("[data-copy]")).toHaveText("Copied");
 });
 
-test("with no donation method set up yet, the section says donations open soon", async ({ page }) => {
+test("the donation section offers the methods set up: PIX code and QR, PayPal", async ({ page, context }) => {
   await offline(page);
   await page.goto(`${BASE}/`);
-  await expect(page.locator("#donate [data-soon]")).toBeVisible();
   await expect(page.locator("#donate h2")).toContainText("Help the next Photoshop feature land.");
+  await expect(page.locator("#donate [data-soon]")).toHaveCount(0);
+  // the PIX copy-and-paste code: a BR Code ending with its own CRC
+  const pix = await page.locator("#donate [data-pix]").getAttribute("data-pix");
+  expect(pix).toMatch(/^000201.*br\.gov\.bcb\.pix.*6304[0-9A-F]{4}$/);
+  await expect(page.locator('#donate img[alt="PIX QR code"]')).toBeVisible();
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.locator("#donate [data-pix]").click();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(pix);
+  // PayPal, with its QR code
+  await expect(page.locator('#donate a[href^="https://www.paypal.com/donate/"]')).toBeVisible();
+  await expect(page.locator('#donate img[alt="PayPal QR code"]')).toBeVisible();
 });
 
 test("a catalogue card opens its feature: before and after, tests, more screenshots", async ({ page }) => {

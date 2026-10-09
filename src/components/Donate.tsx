@@ -14,14 +14,23 @@ const ICONS: Record<string, string> = { "github-sponsors": "♥", kofi: "☕", b
 type Config = {
   pix: { key: string; name: string; city: string };
   links: Record<string, string>;
+  /** link methods that also show a QR code: what the code holds ("": the link) */
+  qr?: Record<string, string>;
   goal: { monthly: number; raised: number; currency: string };
 };
 
 export default async function Donate({ lang, config = donate as Config }: { lang: Lang; config?: Config }) {
   const { pix, links, goal } = config;
   const payload = pix.key && pix.name && pix.city ? pixPayload(pix) : null;
-  const qr = payload ? await QRCode.toString(payload, { type: "svg", margin: 0, errorCorrectionLevel: "M" }) : null;
+  const svg = (text: string) => QRCode.toString(text, { type: "svg", margin: 0, errorCorrectionLevel: "M" });
+  const dataUri = (code: string) => `data:image/svg+xml;utf8,${encodeURIComponent(code)}`;
+  const qr = payload ? await svg(payload) : null;
   const methods = Object.entries(links).filter(([, url]) => url);
+  const linkQr = Object.fromEntries(
+    await Promise.all(
+      methods.filter(([id]) => config.qr && id in config.qr).map(async ([id, url]) => [id, await svg(config.qr?.[id] || url)] as const),
+    ),
+  );
   const any = Boolean(payload) || methods.length > 0;
   const money = new Intl.NumberFormat(lang === "pt" ? "pt-BR" : "en", { style: "currency", currency: goal.currency || "BRL", maximumFractionDigits: 0 });
 
@@ -55,7 +64,7 @@ export default async function Donate({ lang, config = donate as Config }: { lang
             <div className="methods" data-methods="">
               {payload && qr && (
                 <div className="pix">
-                  <img className="pix-qr" src={`data:image/svg+xml;utf8,${encodeURIComponent(qr)}`} alt="PIX QR code" width={156} height={156} />
+                  <img className="pix-qr" src={dataUri(qr)} alt="PIX QR code" width={156} height={156} />
                   <div>
                     <strong>{t(lang, "donate.pix.title")}</strong>
                     <p>{t(lang, "donate.pix.text")}</p>
@@ -64,13 +73,24 @@ export default async function Donate({ lang, config = donate as Config }: { lang
                   </div>
                 </div>
               )}
-              {methods.map(([id, url]) => (
+              {methods.map(([id, url]) =>
+                linkQr[id] ? (
+                  <div className="pix" key={id} data-link-qr={id}>
+                    <img className="pix-qr" src={dataUri(linkQr[id])} alt={`${t(lang, `donate.link.${id}`)} QR code`} width={156} height={156} />
+                    <div>
+                      <strong>{t(lang, `donate.link.${id}`)}</strong>
+                      <p>{t(lang, `donate.link.${id}.text`)}</p>
+                      <a className="btn btn-primary btn-sm" href={url} rel="noopener" target="_blank">{t(lang, "donate.give")} →</a>
+                    </div>
+                  </div>
+                ) : (
                 <a className="method" href={url} key={id} rel="noopener" target="_blank">
                   <span className="m-icon" aria-hidden="true">{ICONS[id] ?? "♥"}</span>
                   <span className="m-body"><strong>{t(lang, `donate.link.${id}`)}</strong><span>{t(lang, `donate.link.${id}.text`)}</span></span>
                   <span className="m-go">{t(lang, "donate.give")} →</span>
                 </a>
-              ))}
+                ),
+              )}
             </div>
           ) : (
             <div className="soon" data-soon="">
